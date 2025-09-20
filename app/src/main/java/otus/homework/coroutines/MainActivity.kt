@@ -10,7 +10,6 @@ import kotlinx.coroutines.Job
 class MainActivity : AppCompatActivity() {
 
     lateinit var catsPresenter: CatsPresenter
-
     private val diContainer = DiContainer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +17,9 @@ class MainActivity : AppCompatActivity() {
 
         val view = layoutInflater.inflate(R.layout.activity_main, null) as CatsView
         setContentView(view)
-        catsPresenter = CatsPresenter(diContainer.service, ::onShowToast)
+        catsPresenter = CatsPresenter(diContainer.service,
+            diContainer.imagesService,
+            ::onShowToast)
         view.presenter = catsPresenter
         catsPresenter.attachView(view)
         catsPresenter.onInitComplete()
