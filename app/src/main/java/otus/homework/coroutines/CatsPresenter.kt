@@ -22,8 +22,8 @@ class CatsPresenter(
     fun onInitComplete() {
         presenterScope.launch {
             try {
-                val fact = async{catsService.getCatFact()}
-                val image = async{imagesService.getImage().firstOrNull()}
+                val fact = async { catsService.getCatFact() }
+                val image = async { imagesService.getImage().firstOrNull() }
 
                 _catsView?.populate(Model(fact.await(), image.await()?.url))
             } catch (e: SocketTimeoutException) {

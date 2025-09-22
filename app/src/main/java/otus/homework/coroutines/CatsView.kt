@@ -17,17 +17,21 @@ class CatsView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), ICatsView {
 
-    var presenter :CatsPresenter? = null
+    var presenter: CatsPresenter? = null
+    var viewModel: CatsViewModel? = null
 
     override fun onFinishInflate() {
         super.onFinishInflate()
         findViewById<Button>(R.id.button).setOnClickListener {
-            presenter?.onInitComplete()
+            if (presenter != null) {
+                presenter?.onInitComplete()
+            } else {
+                viewModel?.onInitComplete()
+            }
         }
     }
 
     override fun populate(model: Model) {
-
         findViewById<TextView>(R.id.fact_textView).text = model.fact.fact
         val Imageview = findViewById<ImageView>(R.id.imageView)
         Picasso.get().load(model.imageUrl).into(Imageview)
