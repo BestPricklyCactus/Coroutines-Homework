@@ -4,10 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.observeOn
 import kotlinx.coroutines.launch
 import otus.homework.coroutines.model.Model
 
@@ -15,14 +11,14 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var catsPresenter: CatsPresenter
     private val diContainer = DiContainer()
-    private var isPresenretMode = true
+    private var isPresenterMode = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val view = layoutInflater.inflate(R.layout.activity_main, null) as CatsView
         setContentView(view)
-        if (isPresenretMode) {
+        if (isPresenterMode) {
             catsPresenter = CatsPresenter(
                 diContainer.service,
                 diContainer.imagesService,
@@ -39,13 +35,12 @@ class MainActivity : AppCompatActivity() {
                 ::onShowToast
             )
             viewModel.onInitComplete()
-            view.viewModel = viewModel
             lifecycleScope.launch {
                 viewModel.state.collect { state ->
                     when (state) {
                         is Result.Success<*> -> {
                             if (state.data is Model) {
-                                view.populate(Model(state.data.fact, state.data.imageUrl))
+                                view.populate(state.data)
                             }
                         }
 
@@ -64,8 +59,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         if (isFinishing) {
-            catsPresenter.detachView()
-            catsPresenter.onStop()
+            if(::catsPresenter.isInitialized) {
+                catsPresenter.detachView()
+                catsPresenter.onStop()
+            }
         }
         super.onStop()
     }

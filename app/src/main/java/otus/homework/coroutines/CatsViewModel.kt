@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import otus.homework.coroutines.CrashMonitor.trackWarning
-import otus.homework.coroutines.model.Fact
 import otus.homework.coroutines.model.Model
 import java.net.SocketTimeoutException
 
@@ -24,7 +23,7 @@ class CatsViewModel(
     private val _state = MutableStateFlow<Result>(Result.Error("Не получилось получить факт"))
     val state: StateFlow<Result> = _state.asStateFlow()
 
-    val handler = CoroutineExceptionHandler { _, exception ->
+    private val handler = CoroutineExceptionHandler { _, exception ->
         if(exception is SocketTimeoutException){
             onShowToast("Не удалось получить ответ от сервера")
         }else {
